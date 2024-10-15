@@ -80,7 +80,7 @@
 FROM registry.access.redhat.com/ubi8/openjdk-17:1.20 AS build
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /
 
 # Copy the Maven wrapper and pom.xml
 COPY ./mvnw ./mvnw

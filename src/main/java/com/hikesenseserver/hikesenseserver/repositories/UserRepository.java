@@ -14,4 +14,5 @@ import org.bson.types.ObjectId;
 public interface UserRepository extends MongoRepository<User, ObjectId> {
     Optional<User> findByUsername(String username); 
     UserDetails findUserDetailsByUsername(String username);
+    boolean existsByUsername(String username);
 }

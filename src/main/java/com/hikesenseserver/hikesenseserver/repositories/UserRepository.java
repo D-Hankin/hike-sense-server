@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import com.hikesenseserver.hikesenseserver.models.User;
 
+import org.bson.types.ObjectId;
+
 @Repository
-public interface UserRepository extends MongoRepository<User, String> {
+public interface UserRepository extends MongoRepository<User, ObjectId> {
     Optional<User> findByUsername(String username); 
     UserDetails findUserDetailsByUsername(String username);
 }

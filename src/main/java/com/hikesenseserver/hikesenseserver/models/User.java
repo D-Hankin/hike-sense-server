@@ -1,11 +1,12 @@
 package com.hikesenseserver.hikesenseserver.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -91,8 +92,8 @@ public class User {
         return hikes;
     }
 
-    public void setHikes(ArrayList<Hike> arrayList) {
-        this.hikes = arrayList;
+    public void setHikes(List<Hike> hikes) {
+        this.hikes = hikes;
     }
 
     public List<ObjectId> getFriends() {

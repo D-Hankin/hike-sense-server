@@ -1,12 +1,12 @@
 package com.hikesenseserver.hikesenseserver.models;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -34,11 +34,13 @@ public class User {
 
     private List<Hike> hikes; 
     private List<ObjectId> friends; 
+    private String subscriptionStatus;
+    private List<String> authorities;
 
     public User() {
     }
 
-    public User(ObjectId id, String username, String password, String firstName, String lastName, List<Hike> hikes, List<ObjectId> friends) {
+    public User(ObjectId id, String username, String password, String firstName, String lastName, List<Hike> hikes, List<ObjectId> friends, String subscriptionStatus, List<String> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -46,6 +48,8 @@ public class User {
         this.lastName = lastName;
         this.hikes = hikes;
         this.friends = friends;
+        this.subscriptionStatus = subscriptionStatus;
+        this.authorities = authorities;
     }
 
     public ObjectId getId() {
@@ -102,6 +106,22 @@ public class User {
 
     public void setFriends(List<ObjectId> friends) {
         this.friends = friends;
+    }
+
+    public String getSubscriptionStatus() {
+        return subscriptionStatus;
+    }
+
+    public void setSubscriptionStatus(String subscriptionStatus) {
+        this.subscriptionStatus = subscriptionStatus;
+    }
+
+    public List<String> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(List<String> role) {
+        this.authorities = role;
     }
 
  

@@ -30,6 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     UserRepository userRepository;
 
+    @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -54,13 +55,16 @@ public class JwtFilter extends OncePerRequestFilter {
             } else {
                 System.out.println("No user details found for username: " + username);
             }
-
-            if (jwtCreationComponent.validateToken(token, user)) {
+            
+            if (user != null && jwtCreationComponent.validateToken(token, user)) {
                 System.out.println("Token is valid. Authenticating user: " + username);
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                System.out.println("Authorities: " + user.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
                 System.out.println("User authenticated successfully: " + username);
+            } else if (user == null) {
+                System.out.println("No user details found for username: " + username);
             } else {
                 System.out.println("Invalid token for user: " + username);
             }

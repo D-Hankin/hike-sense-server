@@ -1,6 +1,7 @@
 package com.hikesenseserver.hikesenseserver.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,6 +55,8 @@ public class UserService {
             user.setHikes(new ArrayList<Hike>());
             user.setFriends(new ArrayList<>());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setSubscriptionStatus("none");
+            user.setAuthorities(List.of("ROLE_USER"));
             userRepository.insert(user);
 
             ResponseEntity<LoginResponse> response = login(new LoginDto(user.getUsername(), rawPassword));
@@ -81,4 +84,5 @@ public class UserService {
                                 .body(new LoginResponse("Bad credentials", null));
         }
     }
+
 }

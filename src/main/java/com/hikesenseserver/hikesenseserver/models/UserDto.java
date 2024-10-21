@@ -2,6 +2,8 @@ package com.hikesenseserver.hikesenseserver.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,8 +18,10 @@ public class UserDto implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<>();
-    }
+    return user.getAuthorities().stream()
+               .map(authority -> (GrantedAuthority) () -> authority)
+               .collect(Collectors.toList());
+}
 
     @Override
     public String getPassword() {

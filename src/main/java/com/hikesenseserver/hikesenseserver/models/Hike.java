@@ -3,8 +3,12 @@ package com.hikesenseserver.hikesenseserver.models;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
 public class Hike {
-     private String name; // Name of the hike
+
+    private String id; // Unique identifier for the hike
+    private String name; // Name of the hike
     private Location startLocation; // Starting location coordinates (latitude and longitude)
     private Location finishLocation; // Finishing location coordinates (latitude and longitude)
     private Date startTime; // Start time of the hike
@@ -20,7 +24,8 @@ public class Hike {
     public Hike() {
     }
 
-    public Hike(String name, Location startLocation, Location finishLocation, Date startTime, Date finishTime, double distance, int duration, String route, boolean isFavorite, double avgHeartRate, double avgTemp, List<Alert> alerts) {
+    public Hike(String id, String name, Location startLocation, Location finishLocation, Date startTime, Date finishTime, double distance, int duration, String route, boolean isFavorite, double avgHeartRate, double avgTemp, List<Alert> alerts) {
+        this.id = id;
         this.name = name;
         this.startLocation = startLocation;
         this.finishLocation = finishLocation;
@@ -129,6 +134,14 @@ public class Hike {
 
     public void setAlerts(List<Alert> alerts) {
         this.alerts = alerts;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hikesenseserver.hikesenseserver.models.Hike;
-import com.hikesenseserver.hikesenseserver.models.User;
 import com.hikesenseserver.hikesenseserver.services.HikeService;
 
 import jakarta.validation.Valid;
@@ -21,7 +20,7 @@ public class HikeController {
     HikeService hikeService;
 
     @PostMapping("/new-hike")
-    public ResponseEntity<User> newHike(@Valid @RequestBody Hike hike) {
+    public ResponseEntity<String> newHike(@Valid @RequestBody Hike hike) {
         return hikeService.newHike(hike);
     }
     

@@ -24,7 +24,7 @@ public class HikeService {
     @Autowired
     UserRepository userRepository;
 
-    public ResponseEntity<User> newHike(Hike hike) {
+    public ResponseEntity<String> newHike(Hike hike) {
         hike.setId(UUID.randomUUID().toString());
         try {
             System.out.println("Adding hike to user account.");
@@ -39,7 +39,7 @@ public class HikeService {
             user.getHikes().add(hike);
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(user);
+                                .body("New hike saved!");
         } catch (UsernameNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body(null);

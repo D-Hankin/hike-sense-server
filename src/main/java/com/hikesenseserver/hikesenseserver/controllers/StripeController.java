@@ -35,4 +35,10 @@ public class StripeController {
         return ResponseEntity.ok(response);
     }
     
+    @PostMapping("/cancel")
+    public ResponseEntity<Map<String, String>> cancelSubscription(@RequestHeader String subscriptionId) throws StripeException {
+        Stripe.apiKey = stripeConfig.getStripeSecretKey();
+        Map<String, String> response = stripeService.cancelSubscription(subscriptionId);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -99,4 +99,30 @@ public class StripeService {
             throw new RuntimeException("Failed to create customer.");
         }
     }
+
+    public Map<String, String> cancelSubscription(String subscriptionId) {
+        System.out.println("Cancelling subscription...");
+
+        try {
+            Subscription subscription = Subscription.retrieve(subscriptionId);
+            subscription.cancel();
+            HashMap<String, String> responseData = new HashMap<>();
+            responseData.put("status", "Subscription cancelled successfully.");
+
+            UserDetails userDetails = (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+            User user = userRepository.findByUsername(userDetails.getUsername())
+                                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            user.setSubscriptionStatus("free");
+            userRepository.save(user);
+            return responseData;
+        } catch (StripeException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to cancel subscription.", e);
+        }
+    }
 }

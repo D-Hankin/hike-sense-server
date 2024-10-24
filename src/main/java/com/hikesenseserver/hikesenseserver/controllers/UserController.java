@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,5 +37,10 @@ public class UserController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginDto user) {
         return userService.login(user);
     }
+
+    @GetMapping("/get-user")
+    public ResponseEntity<User> getUser() {
+        return userService.getUser();
+    }  
     
 }

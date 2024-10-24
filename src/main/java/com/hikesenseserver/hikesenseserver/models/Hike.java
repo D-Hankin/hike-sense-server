@@ -3,8 +3,6 @@ package com.hikesenseserver.hikesenseserver.models;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-
 public class Hike {
 
     private String id; // Unique identifier for the hike
@@ -20,11 +18,12 @@ public class Hike {
     private double avgHeartRate; // Average heart rate during the hike
     private double avgTemp; // Average temperature during the hike
     private List<Alert> alerts; // List of alerts associated with the hike
+    private Boolean completed;
 
     public Hike() {
     }
 
-    public Hike(String id, String name, Location startLocation, Location finishLocation, Date startTime, Date finishTime, double distance, int duration, String route, boolean isFavorite, double avgHeartRate, double avgTemp, List<Alert> alerts) {
+    public Hike(String id, String name, Location startLocation, Location finishLocation, Date startTime, Date finishTime, double distance, int duration, String route, boolean isFavorite, double avgHeartRate, double avgTemp, List<Alert> alerts, Boolean completed) {
         this.id = id;
         this.name = name;
         this.startLocation = startLocation;
@@ -38,6 +37,7 @@ public class Hike {
         this.avgHeartRate = avgHeartRate;
         this.avgTemp = avgTemp;
         this.alerts = alerts;
+        this.completed = completed;
     }
 
     public String getName() {
@@ -142,6 +142,14 @@ public class Hike {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
     }
 
 }

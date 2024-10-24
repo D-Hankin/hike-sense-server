@@ -7,6 +7,7 @@ public class Hike {
 
     private String id; // Unique identifier for the hike
     private String name; // Name of the hike
+    private Date dateCreated;
     private Location startLocation; // Starting location coordinates (latitude and longitude)
     private Location finishLocation; // Finishing location coordinates (latitude and longitude)
     private Date startTime; // Start time of the hike
@@ -23,9 +24,10 @@ public class Hike {
     public Hike() {
     }
 
-    public Hike(String id, String name, Location startLocation, Location finishLocation, Date startTime, Date finishTime, double distance, int duration, String route, boolean isFavorite, double avgHeartRate, double avgTemp, List<Alert> alerts, Boolean completed) {
+    public Hike(String id, String name, Date dateCreated, Location startLocation, Location finishLocation, Date startTime, Date finishTime, double distance, int duration, String route, boolean isFavorite, double avgHeartRate, double avgTemp, List<Alert> alerts, Boolean completed) {
         this.id = id;
         this.name = name;
+        this.dateCreated = dateCreated;
         this.startLocation = startLocation;
         this.finishLocation = finishLocation;
         this.startTime = startTime;
@@ -38,6 +40,14 @@ public class Hike {
         this.avgTemp = avgTemp;
         this.alerts = alerts;
         this.completed = completed;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public String getName() {

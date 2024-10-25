@@ -1,5 +1,6 @@
 package com.hikesenseserver.hikesenseserver.services;
 
+import java.util.Date;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -26,6 +27,8 @@ public class HikeService {
 
     public ResponseEntity<String> newHike(Hike hike) {
         hike.setId(UUID.randomUUID().toString());
+        hike.setCompleted(false);
+        hike.setDateCreated(new Date());
         try {
             System.out.println("Adding hike to user account.");
             UserDetails userDetails = (UserDetails) SecurityContextHolder
@@ -35,7 +38,6 @@ public class HikeService {
 
             User user = userRepository.findByUsername(userDetails.getUsername())
                                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
             user.getHikes().add(hike);
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED)

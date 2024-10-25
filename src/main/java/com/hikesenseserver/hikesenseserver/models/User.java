@@ -1,13 +1,10 @@
 package com.hikesenseserver.hikesenseserver.models;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.security.core.GrantedAuthority;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -33,14 +30,15 @@ public class User {
     private String lastName;
 
     private List<Hike> hikes; 
-    private List<ObjectId> friends; 
+    private List<Friend> friends; 
+    private List<String> pendingFriendRequests;
     private String subscriptionStatus;
     private List<String> authorities;
 
     public User() {
     }
 
-    public User(ObjectId id, String username, String password, String firstName, String lastName, List<Hike> hikes, List<ObjectId> friends, String subscriptionStatus, List<String> authorities) {
+    public User(ObjectId id, String username, String password, String firstName, String lastName, List<Hike> hikes, List<Friend> friends, List<String> pendingFriendRequests, String subscriptionStatus, List<String> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -48,6 +46,7 @@ public class User {
         this.lastName = lastName;
         this.hikes = hikes;
         this.friends = friends;
+        this.pendingFriendRequests = pendingFriendRequests;
         this.subscriptionStatus = subscriptionStatus;
         this.authorities = authorities;
     }
@@ -100,11 +99,11 @@ public class User {
         this.hikes = hikes;
     }
 
-    public List<ObjectId> getFriends() {
+    public List<Friend> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<ObjectId> friends) {
+    public void setFriends(List<Friend> friends) {
         this.friends = friends;
     }
 
@@ -122,6 +121,14 @@ public class User {
 
     public void setAuthorities(List<String> role) {
         this.authorities = role;
+    }
+
+    public List<String> getPendingFriendRequests() {
+        return pendingFriendRequests;
+    }
+
+    public void setPendingFriendRequests(List<String> friendRequests) {
+        this.pendingFriendRequests = friendRequests;
     }
 
  

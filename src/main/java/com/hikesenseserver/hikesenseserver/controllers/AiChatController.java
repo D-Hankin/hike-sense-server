@@ -18,9 +18,6 @@ public class AiChatController {
     
     @PostMapping("/chat")
     public AiChatResponse postChat(@RequestBody String promt) {
-        
-       System.out.println("Promt: " + promt);
-
         return aiChatService.sendChatResponse(promt);
     }
 }

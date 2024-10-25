@@ -31,13 +31,14 @@ public class User {
 
     private List<Hike> hikes; 
     private List<Friend> friends; 
+    private List<String> pendingFriendRequests;
     private String subscriptionStatus;
     private List<String> authorities;
 
     public User() {
     }
 
-    public User(ObjectId id, String username, String password, String firstName, String lastName, List<Hike> hikes, List<Friend> friends, String subscriptionStatus, List<String> authorities) {
+    public User(ObjectId id, String username, String password, String firstName, String lastName, List<Hike> hikes, List<Friend> friends, List<String> pendingFriendRequests, String subscriptionStatus, List<String> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -45,6 +46,7 @@ public class User {
         this.lastName = lastName;
         this.hikes = hikes;
         this.friends = friends;
+        this.pendingFriendRequests = pendingFriendRequests;
         this.subscriptionStatus = subscriptionStatus;
         this.authorities = authorities;
     }
@@ -119,6 +121,14 @@ public class User {
 
     public void setAuthorities(List<String> role) {
         this.authorities = role;
+    }
+
+    public List<String> getPendingFriendRequests() {
+        return pendingFriendRequests;
+    }
+
+    public void setPendingFriendRequests(List<String> friendRequests) {
+        this.pendingFriendRequests = friendRequests;
     }
 
  

@@ -1,9 +1,12 @@
 package com.hikesenseserver.hikesenseserver.services;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -130,31 +133,66 @@ public class UserService {
 
     // Removes a user from the online users collection
     public void removeUserOnline(String username) {   
-        List<UserOnline> usersOnline = userOnlineRepository.findAll();
-        usersOnline.removeIf(user -> user.getUsername().equals(username));
-        System.out.println(username + " is now offline.");
+        // Find the user in the repository
+        UserOnline userToRemove = userOnlineRepository.findByUsername(username);
+        
+        if (userToRemove != null) {
+            userOnlineRepository.delete(userToRemove);  // Delete user from repository
+            System.out.println(username + " is now offline.");
+        } else {
+            System.out.println(username + " was not found in the online list.");
+        }
     }
+    
 
     // Retrieves all users currently online
     public List<UserOnline> getUsersOnline() {
-
         UserDetails userDetails = (UserDetails) SecurityContextHolder
             .getContext()
             .getAuthentication()
             .getPrincipal();
-
+    
+        System.out.println("Logged-in User: " + userDetails.getUsername());
+    
         User user = userRepository.findByUsername(userDetails.getUsername())
                                  .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
+    
         List<UserOnline> usersOnline = userOnlineRepository.findAll();
+    
+        System.out.println("Users online before filtering: " + usersOnline.stream()
+                                                                           .map(UserOnline::getUsername)
+                                                                           .collect(Collectors.joining(", ")));
+    
+        // Iterate with explicit conditions
+        Iterator<UserOnline> iterator = usersOnline.iterator();
+        while (iterator.hasNext()) {
+            UserOnline userOnline = iterator.next();
+            boolean isLoggedInUser = user.getUsername().equals(userOnline.getUsername());
+            System.out.println("Checking UserOnline: " + userOnline.getUsername());
 
-        for (UserOnline userOnline : usersOnline) {
-            if (user.getUsername().equals(userDetails.getUsername()) || !user.getFriends().stream().anyMatch(friend -> friend.getUsernameFriend().equals(userOnline.getUsername()))) {
-                usersOnline.remove(userOnline);
+            if (isLoggedInUser) {
+                iterator.remove();
+                System.out.println("Removed: " + userOnline.getUsername());
+                continue;
+            }
+
+            boolean isFriend = user.getFriends().stream()
+                                   .anyMatch(friend -> friend.getUsernameFriend().equals(userOnline.getUsername().toString()));
+    
+            System.out.println("Is Logged-in User: " + isLoggedInUser + ", Is Friend: " + isFriend);
+    
+            // Remove if not the current user and not a friend
+            if (!isFriend) {
+                iterator.remove();
+                System.out.println("Removed: " + userOnline.getUsername());
             }
         }
-
+    
+        System.out.println("Users online after filtering: " + usersOnline.stream()
+                                                                          .map(UserOnline::getUsername)
+                                                                          .collect(Collectors.joining(", ")));
         return usersOnline;
     }
-
+    
+    
 }

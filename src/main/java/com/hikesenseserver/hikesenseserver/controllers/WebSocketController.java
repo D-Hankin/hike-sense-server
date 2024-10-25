@@ -39,7 +39,7 @@ public class WebSocketController {
     @MessageMapping("/friend-logout")
     public void notifyFriendsOfOfflineStatus(Principal user) {
         List<String> friendsUsernames = webSocketService.getFriendsUsernames(user.getName());
-        userService.removeUserOnline(user.getName());
+        userService.removeUserOnline(user.getName().toString());
         for (String friendUsername : friendsUsernames) {
             messagingTemplate.convertAndSend("/topic/online-status/" + friendUsername, user.getName() + " is offline.");
         }
@@ -86,7 +86,7 @@ public class WebSocketController {
         // webSocketService.saveChatMessage(chatMessage);  // Store the chat message in the database if needed
 
         // Send the message to the recipient's specific chat topic
-        messagingTemplate.convertAndSend("/topic/chat/" + chatMessage.getReceiver(), chatMessage);
+        messagingTemplate.convertAndSend("/topic/chat/" + chatMessage.getSender(), chatMessage);
     }
 
 }

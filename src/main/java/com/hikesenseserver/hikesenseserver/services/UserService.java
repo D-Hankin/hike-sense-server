@@ -3,6 +3,7 @@ package com.hikesenseserver.hikesenseserver.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hikesenseserver.hikesenseserver.components.JwtComponent;
+import com.hikesenseserver.hikesenseserver.models.FriendRequest;
 import com.hikesenseserver.hikesenseserver.models.Hike;
 import com.hikesenseserver.hikesenseserver.models.LoginDto;
 import com.hikesenseserver.hikesenseserver.models.LoginResponse;
 import com.hikesenseserver.hikesenseserver.models.User;
+import com.hikesenseserver.hikesenseserver.models.UserOnline;
 import com.hikesenseserver.hikesenseserver.repositories.UserRepository;
+import com.hikesenseserver.hikesenseserver.repositories.UserOnlineRepository;
 
 import jakarta.validation.Valid;
 
@@ -36,6 +40,9 @@ public class UserService {
 
     @Autowired
     private final AuthenticationManager authenticationManager;
+
+    @Autowired
+    UserOnlineRepository userOnlineRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -57,8 +64,9 @@ public class UserService {
 
             user.setHikes(new ArrayList<Hike>());
             user.setFriends(new ArrayList<>());
+            user.setPendingFriendRequests(new ArrayList<>());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setSubscriptionStatus("none");
+            user.setSubscriptionStatus("free");
             user.setAuthorities(List.of("ROLE_USER"));
             userRepository.insert(user);
 
@@ -79,7 +87,6 @@ public class UserService {
             );
             String token = jwtCreationComponent.createToken(authentication);
             User user = userRepository.findByUsername(userDto.getUsername()).get();
-            System.out.println("User: " + user.getFirstName());
             user.setPassword(null);
             return ResponseEntity.ok(new LoginResponse(token, user));
         } catch (AuthenticationException e) {
@@ -97,6 +104,57 @@ public class UserService {
                                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         user.setPassword(null);
         return ResponseEntity.ok(user);
+    }
+
+    public void addFriendRequest(FriendRequest request) {
+        User receiver = userRepository.findByUsername(request.getReceiver())
+                                      .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        receiver.getPendingFriendRequests().add(request.getSender());
+        userRepository.save(receiver);
+    }
+
+    public void addUserOnline(String username) {
+        // Check if the user is already online
+        List<UserOnline> usersOnline = userOnlineRepository.findAll();
+        boolean userExists = usersOnline.stream().anyMatch(user -> user.getUsername().equals(username));
+        
+        if (!userExists) {
+            // Create a new UserOnline instance and save it
+            UserOnline newUserOnline = new UserOnline(username);
+            userOnlineRepository.save(newUserOnline);
+            System.out.println(username + " is now online.");
+        } else {
+            System.out.println(username + " is already online.");
+        }
+    }
+
+    // Removes a user from the online users collection
+    public void removeUserOnline(String username) {   
+        List<UserOnline> usersOnline = userOnlineRepository.findAll();
+        usersOnline.removeIf(user -> user.getUsername().equals(username));
+        System.out.println(username + " is now offline.");
+    }
+
+    // Retrieves all users currently online
+    public List<UserOnline> getUsersOnline() {
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder
+            .getContext()
+            .getAuthentication()
+            .getPrincipal();
+
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        List<UserOnline> usersOnline = userOnlineRepository.findAll();
+
+        for (UserOnline userOnline : usersOnline) {
+            if (user.getUsername().equals(userDetails.getUsername()) || !user.getFriends().stream().anyMatch(friend -> friend.getUsernameFriend().equals(userOnline.getUsername()))) {
+                usersOnline.remove(userOnline);
+            }
+        }
+
+        return usersOnline;
     }
 
 }

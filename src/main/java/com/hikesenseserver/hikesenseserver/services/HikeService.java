@@ -68,7 +68,12 @@ public class HikeService {
                                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             for (Hike h : user.getHikes()) {
                 if (h.getName().equals(hike.getName())) {
-                    h = hike;
+                    h.setStartTime(hike.getStartTime());
+                    h.setFinishTime(hike.getFinishTime());
+                    h.setDuration(hike.getDuration());
+                    h.setAvgHeartRate(hike.getAvgHeartRate());
+                    h.setAlerts(hike.getAlerts());
+                    h.setFavorite(hike.isFavorite());
                     userRepository.save(user);
                     return ResponseEntity.status(HttpStatus.OK)
                                         .body("Hike completed!");

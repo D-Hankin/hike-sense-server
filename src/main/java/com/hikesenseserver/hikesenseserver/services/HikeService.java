@@ -16,6 +16,8 @@ import com.hikesenseserver.hikesenseserver.models.Hike;
 import com.hikesenseserver.hikesenseserver.models.User;
 import com.hikesenseserver.hikesenseserver.repositories.UserRepository;
 
+import jakarta.validation.Valid;
+
 @Service
 public class HikeService {
 
@@ -50,6 +52,38 @@ public class HikeService {
                                 .body(null);
         } catch (Exception ex) {
             System.out.println("Error adding hike to user account: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(null);
+        }
+    }
+
+    public ResponseEntity<String> finishHike(@Valid Hike hike) {
+        try {
+            UserDetails userDetails = (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+            User user = userRepository.findByUsername(userDetails.getUsername())
+                                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            for (Hike h : user.getHikes()) {
+                if (h.getName().equals(hike.getName())) {
+                    h = hike;
+                    userRepository.save(user);
+                    return ResponseEntity.status(HttpStatus.OK)
+                                        .body("Hike completed!");
+                }
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body("Hike not found.");
+        } catch (UsernameNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body(null);
+        } catch (DataAccessException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(null);
+        } catch (Exception ex) {
+            System.out.println("Error finishing hike: " + ex.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(null);
         }

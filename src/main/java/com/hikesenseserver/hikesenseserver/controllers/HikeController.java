@@ -23,5 +23,11 @@ public class HikeController {
     public ResponseEntity<String> newHike(@Valid @RequestBody Hike hike) {
         return hikeService.newHike(hike);
     }
+
+    @PostMapping("/finish-hike")
+    public ResponseEntity<String> finishHike(@Valid @RequestBody Hike hike) {
+        System.out.println("Finishing hike: " + hike.getName());
+        return hikeService.finishHike(hike);
+    }
     
 }

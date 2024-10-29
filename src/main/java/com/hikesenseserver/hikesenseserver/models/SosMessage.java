@@ -1,15 +1,15 @@
 package com.hikesenseserver.hikesenseserver.models;
 
 public class SosMessage {
-    private String location;
+    private Location location;
     private String time;
 
-    public SosMessage(String location, String time) {
+    public SosMessage(Location location, String time) {
         this.location = location;
         this.time = time;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 

@@ -36,6 +36,8 @@ public class SosService {
 
     public ResponseEntity<String> sendSos(@Valid SosMessage sosMessage) {
         System.out.println("SOS sent");
+        System.out.println("Username: " + emailConfig.getEmailUsername());
+        System.out.println("Password: " + emailConfig.getEmailPassword());
         UserDetails userDetails = (UserDetails) SecurityContextHolder
             .getContext()
             .getAuthentication()
@@ -64,11 +66,11 @@ public class SosService {
                 message.setFrom(new InternetAddress(emailConfig.getEmailUsername()));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(friend.getUsernameFriend()));
                 message.setSubject("SOS Message: " + user.getUsername());
-                message.setText("Alert " + friend.getFirstNameFriend() + "!\n\n" + user.getUsername() + " has sent an SOS: \n\nLocation - " + sosMessage.getLocation() + "\nTime - " + sosMessage.getTime());
+                message.setText("Alert " + friend.getFirstNameFriend() + "!\n\n" + user.getUsername() + " has sent an SOS: \n\nLocation - Latitude" + sosMessage.getLocation().getLatitude() + ", Longitude: " + sosMessage.getLocation().getLongitude() + "\nTime - " + sosMessage.getTime());
     
                 Transport.send(message);
     
-                System.out.println("Email sent successfully!");
+                System.out.println("Email sent successfully to " + friend.getUsernameFriend());
     
             } catch (MessagingException e) {
                 e.printStackTrace();

@@ -151,7 +151,7 @@ public class UserService {
             .getAuthentication()
             .getPrincipal();
     
-        System.out.println("Logged-in User: " + userDetails.getUsername());
+        System.out.println("Authenticated User: " + userDetails.getUsername());
     
         User user = userRepository.findByUsername(userDetails.getUsername())
                                  .orElseThrow(() -> new UsernameNotFoundException("User not found"));

@@ -11,7 +11,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,8 +42,6 @@ public class AlertService {
         User user = userRepository.findByUsername(userDetails.getUsername())
                                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        System.out.println("SOS sent by " + user.getUsername());
-
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -63,12 +60,11 @@ public class AlertService {
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress(emailConfig.getEmailUsername()));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(friend.getUsernameFriend()));
-                message.setSubject("SOS Message: " + user.getUsername());
-                message.setText("Alert " + friend.getFirstNameFriend() + "!\n\n" + user.getUsername() + " is out hiking and has unusual heartrate activity: \n\n" + alert.getMessage() + "\n\nLocation - Latitude" + alert.getLocation().getLatitude() + ", Longitude: " + alert.getLocation().getLongitude() + "\nTime - " + alert.getTime());
+                message.setSubject("Heart Rate Alert: " + user.getUsername());
+                message.setText("Alert " + friend.getFirstNameFriend() + "!\n\n" + user.getUsername() + " is out hiking and has unusual heartrate activity: \n\nAlert: " + alert.getMessage() + "\n\nLocation - \nLatitude: " + alert.getLocation().getLatitude() + "\nLongitude: " + alert.getLocation().getLongitude() + "\n\nTime - " + alert.getTime() + "\n\nSee if you can reach out to them and see if everything is alright.");    
     
                 Transport.send(message);
     
-                System.out.println("Email sent successfully to " + friend.getUsernameFriend());
     
             } catch (MessagingException e) {
                 e.printStackTrace();

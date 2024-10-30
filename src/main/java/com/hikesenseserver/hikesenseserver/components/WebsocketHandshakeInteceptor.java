@@ -43,7 +43,6 @@ public class WebsocketHandshakeInteceptor implements HandshakeInterceptor {
         HttpServletRequest servletRequest = requestAttributes.getRequest();
         
         String authHeader = servletRequest.getParameter("token");
-        System.out.println("Auth header: " + authHeader);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             System.out.println("Token found in the request.");

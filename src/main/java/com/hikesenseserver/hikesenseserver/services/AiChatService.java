@@ -23,7 +23,6 @@ public class AiChatService {
         AiChatRequest chatRequest = new AiChatRequest("gpt-4o", prompt, 1);
         AiChatResponse response = restTemplate.postForObject(apiUrl, chatRequest, AiChatResponse.class);
         if (response != null && response.getChoices() != null && !response.getChoices().isEmpty() && response.getChoices().get(0).getMessage() != null) {
-            System.out.println("Chat Response: " + response.getChoices().get(0).getMessage().getContent());
         } else {
             System.out.println("Chat Response: No valid response received.");
         }

@@ -34,7 +34,6 @@ public class WebsocketHandshakeInteceptor implements HandshakeInterceptor {
         
         System.out.println("Before handshake");
 
-        // Extract the HttpServletRequest from the current thread context
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
             System.out.println("No request attributes found");
@@ -46,19 +45,17 @@ public class WebsocketHandshakeInteceptor implements HandshakeInterceptor {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             System.out.println("Token found in the request.");
-            String token = authHeader.substring(7); // Remove "Bearer " prefix
-            String username = jwtComponent.extractUsername(token); // Extract username from the token
+            String token = authHeader.substring(7);
+            String username = jwtComponent.extractUsername(token);
 
-            // Load user details from the database
             UserDetails userDetails = userRepository.findUserDetailsByUsername(username);
 
             if (userDetails != null && jwtComponent.validateToken(token, userDetails)) {
-                // Token is valid, set Authentication in SecurityContext
                 System.out.println("Token is valid. Authenticating user: " + username);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                return true;  // Proceed with the WebSocket handshake
+                return true;  
             } else {
                 System.out.println("Invalid token");
                 return false;
@@ -72,7 +69,6 @@ public class WebsocketHandshakeInteceptor implements HandshakeInterceptor {
     @Override
     public void afterHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response, @NonNull WebSocketHandler wsHandler,
             @Nullable Exception exception) {
-        // This method can be left unimplemented for now
         System.out.println("After handshake");
     }
 }

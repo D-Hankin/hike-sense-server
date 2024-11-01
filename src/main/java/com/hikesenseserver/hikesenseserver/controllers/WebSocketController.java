@@ -1,9 +1,6 @@
 package com.hikesenseserver.hikesenseserver.controllers;
 
 import java.security.Principal;
-import java.util.List;
-
-import javax.management.Notification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -61,19 +58,15 @@ public class WebSocketController {
     public void handleFriendRequestResponse(Principal user, @Payload FriendRequest request) {
     
         if ("ACCEPTED".equals(request.getStatus())) {
-            // Accept the friend request and update the database
-            webSocketService.acceptFriendRequest(request); // Update the database/service as necessary
-
-            // Notify both users of the successful friend request acceptance
+            webSocketService.acceptFriendRequest(request); 
             messagingTemplate.convertAndSend("/topic/friend-requests/" + request.getReceiver(), 
-                user.getName() + " has accepted your friend request."); // Notify the sender
+                user.getName() + " has accepted your friend request."); 
             messagingTemplate.convertAndSend("/topic/friend-requests/" + request.getReceiver(), 
-                user.getName() + " is now your friend."); // Notify the receiver
+                user.getName() + " is now your friend."); 
         } else {
-            // Handle declined friend request
             messagingTemplate.convertAndSend("/topic/friend-requests/" + request.getReceiver(), 
-                user.getName() + " has declined your friend request."); // Notify the sender
-                webSocketService.removeFriendRequest(request); // Update the database/service as necessary
+                user.getName() + " has declined your friend request."); 
+                webSocketService.removeFriendRequest(request); 
         }
 
     }
@@ -81,27 +74,19 @@ public class WebSocketController {
     @MessageMapping("/chat")
     public void handleChatMessage(Principal user, @Payload ChatMessage chatMessage) {
         System.out.println("Received chat message from " + user.getName() + " to " + chatMessage.getReceiver());
-        // Assume chatMessage contains the sender, receiver, and message content
         chatMessage.setSender(user.getName());
-        // webSocketService.saveChatMessage(chatMessage);  // Store the chat message in the database if needed
-
-        // Send the message to the recipient's specific chat topic
         messagingTemplate.convertAndSend("/topic/chat/" + chatMessage.getSender(), chatMessage);
     }
 
     @MessageMapping("/chat/notify")
     public void notifyChatRecipient(Principal user, @Payload String recipient) {
         System.out.println("Received chat notification from " + user.getName() + " to " + recipient);
-        
         messagingTemplate.convertAndSend("/topic/chat/notify/" + user.getName(), user.getName());
-
     }
 
     @MessageMapping("/chat/notification-response")
     public void handleChatNotificationResponse(Principal user, @Payload NotificationResponse notificationResponse) {
         System.out.println("Received chat notification response from " + user.getName() + " to " + notificationResponse.getRecipient());   
-
-        // Send the message to the recipient's specific chat topic
         messagingTemplate.convertAndSend("/topic/chat/notification-response/" + user.getName(), notificationResponse.getResponse());
     }
 

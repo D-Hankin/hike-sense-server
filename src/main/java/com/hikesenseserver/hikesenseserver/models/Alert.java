@@ -3,10 +3,10 @@ package com.hikesenseserver.hikesenseserver.models;
 import java.time.LocalDateTime;
 
 public class Alert {
-    private String type; // Type of alert (e.g., weather, safety, etc.)
-    private String information; // Alert message
-    private Location location; // Location of the alert
-    private LocalDateTime time; // Time of the alert
+    private String type;
+    private String information;
+    private Location location; 
+    private LocalDateTime time; 
 
     public Alert() {
     }

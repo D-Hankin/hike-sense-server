@@ -3,7 +3,6 @@ package com.hikesenseserver.hikesenseserver.services;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,7 @@ import com.hikesenseserver.hikesenseserver.models.Hike;
 import com.hikesenseserver.hikesenseserver.models.LoginDto;
 import com.hikesenseserver.hikesenseserver.models.LoginResponse;
 import com.hikesenseserver.hikesenseserver.models.User;
+import com.hikesenseserver.hikesenseserver.models.UserDto;
 import com.hikesenseserver.hikesenseserver.models.UserOnline;
 import com.hikesenseserver.hikesenseserver.repositories.UserRepository;
 import com.hikesenseserver.hikesenseserver.repositories.UserOnlineRepository;
@@ -48,22 +48,19 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(PasswordEncoder passwordEncoder) {
-        this.authenticationManager = null;
+    public UserService(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
     public ResponseEntity<LoginResponse> createAccount(@Valid User user) {
-
         if (userRepository.existsByUsername(user.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                                  .body(new LoginResponse("email already in use.", null));
         }
         
         if (!user.getUsername().isEmpty() || !user.getFirstName().isEmpty() || !user.getLastName().isEmpty() || !user.getPassword().isEmpty()) {
-
             String rawPassword = user.getPassword();
-
             user.setHikes(new ArrayList<Hike>());
             user.setFriends(new ArrayList<>());
             user.setPendingFriendRequests(new ArrayList<>());
@@ -88,7 +85,8 @@ public class UserService {
                     userDto.getPassword())
             );
             String token = jwtCreationComponent.createToken(authentication);
-            User user = userRepository.findByUsername(userDto.getUsername()).get();
+            User user = userRepository.findByUsername(userDto.getUsername())
+                                       .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             user.setPassword(null);
             return ResponseEntity.ok(new LoginResponse(token, user));
         } catch (AuthenticationException e) {
@@ -98,15 +96,19 @@ public class UserService {
     }
 
     public ResponseEntity<User> getUser() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-            .getContext()
-            .getAuthentication()
-            .getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDto)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    
+        UserDto userDetails = (UserDto) authentication.getPrincipal(); 
         User user = userRepository.findByUsername(userDetails.getUsername())
-                                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        user.setPassword(null);
+                                   .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setPassword(null); 
         return ResponseEntity.ok(user);
     }
+    
 
     public void addFriendRequest(FriendRequest request) {
         User receiver = userRepository.findByUsername(request.getReceiver())
@@ -140,22 +142,22 @@ public class UserService {
     }
 
     public List<UserOnline> getUsersOnline() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder
-            .getContext()
-            .getAuthentication()
-            .getPrincipal();
-    
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return new ArrayList<>(); // Return an empty list if not authenticated
+        }
+        
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         System.out.println("Authenticated User: " + userDetails.getUsername());
-    
+
         User user = userRepository.findByUsername(userDetails.getUsername())
-                                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    
+                                  .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         List<UserOnline> usersOnline = userOnlineRepository.findAll();
-    
         System.out.println("Users online before filtering: " + usersOnline.stream()
-                                                                           .map(UserOnline::getUsername)
-                                                                           .collect(Collectors.joining(", ")));
-    
+                                                                     .map(UserOnline::getUsername)
+                                                                     .collect(Collectors.joining(", ")));
+
         Iterator<UserOnline> iterator = usersOnline.iterator();
         while (iterator.hasNext()) {
             UserOnline userOnline = iterator.next();
@@ -170,20 +172,18 @@ public class UserService {
 
             boolean isFriend = user.getFriends().stream()
                                    .anyMatch(friend -> friend.getUsernameFriend().equals(userOnline.getUsername().toString()));
-    
+
             System.out.println("Is Logged-in User: " + isLoggedInUser + ", Is Friend: " + isFriend);
-    
+
             if (!isFriend) {
                 iterator.remove();
                 System.out.println("Removed: " + userOnline.getUsername());
             }
         }
-    
+
         System.out.println("Users online after filtering: " + usersOnline.stream()
-                                                                          .map(UserOnline::getUsername)
-                                                                          .collect(Collectors.joining(", ")));
+                                                                     .map(UserOnline::getUsername)
+                                                                     .collect(Collectors.joining(", ")));
         return usersOnline;
     }
-    
-    
 }

@@ -1,5 +1,6 @@
 package com.hikesenseserver.hikesenseserver.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -44,9 +45,9 @@ public class User {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.hikes = hikes;
-        this.friends = friends;
-        this.pendingFriendRequests = pendingFriendRequests;
+        this.hikes = hikes != null ? hikes : new ArrayList<>();
+        this.friends = friends != null ? friends : new ArrayList<>();
+        this.pendingFriendRequests = pendingFriendRequests != null ? pendingFriendRequests : new ArrayList<>();
         this.subscriptionStatus = subscriptionStatus;
         this.authorities = authorities;
     }

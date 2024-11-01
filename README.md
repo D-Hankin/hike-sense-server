@@ -25,6 +25,7 @@ Features
 3.  **Safety Alerts**:
 
     -   Alerts based on heart rate thresholds, customized for each user.
+    -   Location markers sent as email notications to users contacts.
 4.  **Subscription Management**:
 
     -   Integration with Stripe for upgrading subscription plans.

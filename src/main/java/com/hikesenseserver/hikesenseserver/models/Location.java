@@ -1,8 +1,8 @@
 package com.hikesenseserver.hikesenseserver.models;
 
 public class Location {
-    private double latitude; // Latitude of the location
-    private double longitude; // Longitude of the location
+    private double latitude;
+    private double longitude; 
 
     public Location() {
     }

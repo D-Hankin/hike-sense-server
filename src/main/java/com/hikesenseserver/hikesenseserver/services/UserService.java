@@ -116,12 +116,10 @@ public class UserService {
     }
 
     public void addUserOnline(String username) {
-        // Check if the user is already online
         List<UserOnline> usersOnline = userOnlineRepository.findAll();
         boolean userExists = usersOnline.stream().anyMatch(user -> user.getUsername().equals(username));
         
         if (!userExists) {
-            // Create a new UserOnline instance and save it
             UserOnline newUserOnline = new UserOnline(username);
             userOnlineRepository.save(newUserOnline);
             System.out.println(username + " is now online.");
@@ -130,21 +128,17 @@ public class UserService {
         }
     }
 
-    // Removes a user from the online users collection
     public void removeUserOnline(String username) {   
-        // Find the user in the repository
         UserOnline userToRemove = userOnlineRepository.findByUsername(username);
         
         if (userToRemove != null) {
-            userOnlineRepository.delete(userToRemove);  // Delete user from repository
+            userOnlineRepository.delete(userToRemove);  
             System.out.println(username + " is now offline.");
         } else {
             System.out.println(username + " was not found in the online list.");
         }
     }
-    
 
-    // Retrieves all users currently online
     public List<UserOnline> getUsersOnline() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder
             .getContext()
@@ -162,7 +156,6 @@ public class UserService {
                                                                            .map(UserOnline::getUsername)
                                                                            .collect(Collectors.joining(", ")));
     
-        // Iterate with explicit conditions
         Iterator<UserOnline> iterator = usersOnline.iterator();
         while (iterator.hasNext()) {
             UserOnline userOnline = iterator.next();
@@ -180,7 +173,6 @@ public class UserService {
     
             System.out.println("Is Logged-in User: " + isLoggedInUser + ", Is Friend: " + isFriend);
     
-            // Remove if not the current user and not a friend
             if (!isFriend) {
                 iterator.remove();
                 System.out.println("Removed: " + userOnline.getUsername());

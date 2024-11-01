@@ -89,10 +89,10 @@ public class StripeService {
                 user.setSubscriptionStatus("premium" + subscription.getId());
                 userRepository.save(user);
 
-                return responseData; // Return the response map
+                return responseData;
             } catch (StripeException e) {
                 e.printStackTrace();
-                throw e; // Or handle the exception accordingly
+                throw e; 
             }
         } else {
             System.err.println("Failed to create customer.");

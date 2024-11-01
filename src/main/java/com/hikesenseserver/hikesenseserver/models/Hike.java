@@ -5,20 +5,20 @@ import java.util.List;
 
 public class Hike {
 
-    private String id; // Unique identifier for the hike
-    private String name; // Name of the hike
+    private String id; 
+    private String name; 
     private Date dateCreated;
-    private Location startLocation; // Starting location coordinates (latitude and longitude)
-    private Location finishLocation; // Finishing location coordinates (latitude and longitude)
-    private Date startTime; // Start time of the hike
-    private Date finishTime; // Finish time of the hike
-    private double distance; // Distance of the hike
-    private int duration; // Duration of the hike in minutes
-    private String route; // Route information (could be a string or a more complex object)
-    private boolean isFavorite; // Indicates if the hike is a favorite
-    private double avgHeartRate; // Average heart rate during the hike
-    private double avgTemp; // Average temperature during the hike
-    private List<Alert> alerts; // List of alerts associated with the hike
+    private Location startLocation;
+    private Location finishLocation; 
+    private Date startTime; 
+    private Date finishTime; 
+    private double distance; 
+    private int duration; 
+    private String route; 
+    private boolean isFavorite; 
+    private double avgHeartRate; 
+    private double avgTemp; 
+    private List<Alert> alerts; 
     private Boolean completed;
 
     public Hike() {

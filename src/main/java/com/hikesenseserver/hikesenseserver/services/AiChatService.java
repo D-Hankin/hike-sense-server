@@ -15,18 +15,20 @@ public class AiChatService {
 
     private final RestTemplate restTemplate;
 
-    public AiChatService(RestTemplate restTemplate) {
+    public AiChatService(RestTemplate restTemplate, String apiUrl) {
         this.restTemplate = restTemplate;
+        this.apiUrl = apiUrl;
     }
 
     public AiChatResponse sendChatResponse(String prompt) {
         AiChatRequest chatRequest = new AiChatRequest("gpt-4o", prompt, 1);
         AiChatResponse response = restTemplate.postForObject(apiUrl, chatRequest, AiChatResponse.class);
         if (response != null && response.getChoices() != null && !response.getChoices().isEmpty() && response.getChoices().get(0).getMessage() != null) {
+            return response;
         } else {
             System.out.println("Chat Response: No valid response received.");
+            return new AiChatResponse();
         }
-        return response;
     }
     
 }
